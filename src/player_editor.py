@@ -304,3 +304,103 @@ def add_player():
     save_players(players)
 
     print("\nPlayer added successfully.\n")
+
+
+
+
+# ==========================================================
+# FastAPI CRUD Helpers
+# ==========================================================
+
+def get_all_players():
+    return load_players()
+
+
+def create_player(player: Player):
+    players = load_players()
+
+    if any(p.name.lower() == player.name.lower() for p in players):
+        raise ValueError("Player already exists.")
+
+    players.append(player)
+
+    insert_player_at_rank(
+        players,
+        player,
+        player.tier,
+        player.rank,
+    )
+
+    save_players(players)
+
+    return player
+
+
+def update_player(player_name: str, updated_player: Player):
+    players = load_players()
+
+    target = None
+
+    for player in players:
+        if player.name.lower() == player_name.lower():
+            target = player
+            break
+
+    if target is None:
+        raise ValueError("Player not found.")
+
+    players.remove(target)
+
+    normalize_ranks(players)
+
+    new_player = Player(
+        name=updated_player.name,
+        tier=updated_player.tier,
+        rank=updated_player.rank,
+        available=updated_player.available,
+    )
+
+    players.append(new_player)
+
+    insert_player_at_rank(
+        players,
+        new_player,
+        new_player.tier,
+        new_player.rank,
+    )
+
+    save_players(players)
+
+    return new_player
+
+
+def remove_player(player_name: str):
+    players = load_players()
+
+    target = None
+
+    for player in players:
+        if player.name.lower() == player_name.lower():
+            target = player
+            break
+
+    if target is None:
+        raise ValueError("Player not found.")
+
+    players.remove(target)
+
+    normalize_ranks(players)
+
+    save_players(players)
+
+
+def update_availability(player_name: str, available: bool):
+    players = load_players()
+
+    for player in players:
+        if player.name == player_name:
+            player.available = available
+            save_players(players)
+            return player
+
+    raise ValueError(f"Player '{player_name}' not found.")
