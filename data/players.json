@@ -1,0 +1,80 @@
+[
+    {
+        "name": "dubi",
+        "tier": "Elite",
+        "rank": 1,
+        "available": true
+    },
+    {
+        "name": "rudra",
+        "tier": "Elite",
+        "rank": 2,
+        "available": true
+    },
+    {
+        "name": "om",
+        "tier": "Elite",
+        "rank": 3,
+        "available": true
+    },
+    {
+        "name": "mazhar",
+        "tier": "Elite",
+        "rank": 4,
+        "available": true
+    },
+    {
+        "name": "kadu",
+        "tier": "Good",
+        "rank": 1,
+        "available": true
+    },
+    {
+        "name": "alok",
+        "tier": "Good",
+        "rank": 2,
+        "available": true
+    },
+    {
+        "name": "Phiske",
+        "tier": "Good",
+        "rank": 3,
+        "available": true
+    },
+    {
+        "name": "kasande",
+        "tier": "Good",
+        "rank": 4,
+        "available": true
+    },
+    {
+        "name": "dongare",
+        "tier": "Good",
+        "rank": 5,
+        "available": true
+    },
+    {
+        "name": "khalati",
+        "tier": "Good",
+        "rank": 6,
+        "available": true
+    },
+    {
+        "name": "kholay",
+        "tier": "Good",
+        "rank": 7,
+        "available": true
+    },
+    {
+        "name": "Anshu",
+        "tier": "Average",
+        "rank": 1,
+        "available": true
+    },
+    {
+        "name": "kharche",
+        "tier": "Average",
+        "rank": 2,
+        "available": true
+    }
+]
