@@ -1,10 +1,7 @@
-import json
-from pathlib import Path
-
 import pytest
 
-from src.models import Player
 import src.player_manager as player_manager
+from src.models import Player
 
 
 @pytest.fixture

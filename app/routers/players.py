@@ -1,18 +1,17 @@
 from fastapi import APIRouter, HTTPException
 
 from app.schemas import (
+    AvailabilityUpdate,
     PlayerCreate,
     PlayerUpdate,
-    AvailabilityUpdate,
 )
-
 from src.models import Player
 from src.player_editor import (
-    get_all_players,
     create_player,
-    update_player,
+    get_all_players,
     remove_player,
     update_availability,
+    update_player,
 )
 
 router = APIRouter(
@@ -53,7 +52,6 @@ def get_player(
     players = get_all_players()
 
     for player in players:
-
         if player.name.lower() == player_name.lower():
             return player.to_dict()
 
@@ -80,7 +78,6 @@ def add_player(
     """
 
     try:
-
         created = create_player(
             Player(
                 name=player.name,
@@ -93,11 +90,10 @@ def add_player(
         return created.to_dict()
 
     except ValueError as e:
-
         raise HTTPException(
             status_code=400,
             detail=str(e),
-        )
+        ) from e
 
 
 # =====================================================
@@ -115,7 +111,6 @@ def edit_player(
     """
 
     try:
-
         updated = update_player(
             player_name,
             Player(
@@ -129,11 +124,10 @@ def edit_player(
         return updated.to_dict()
 
     except ValueError as e:
-
         raise HTTPException(
             status_code=404,
             detail=str(e),
-        )
+        ) from e
 
 
 # =====================================================
@@ -151,7 +145,6 @@ def change_availability(
     """
 
     try:
-
         updated = update_availability(
             player_name,
             payload.available,
@@ -160,11 +153,10 @@ def change_availability(
         return updated.to_dict()
 
     except ValueError as e:
-
         raise HTTPException(
             status_code=404,
             detail=str(e),
-        )
+        ) from e
 
 
 # =====================================================
@@ -181,7 +173,6 @@ def delete_player(
     """
 
     try:
-
         remove_player(
             player_name,
         )
@@ -192,8 +183,7 @@ def delete_player(
         }
 
     except ValueError as e:
-
         raise HTTPException(
             status_code=404,
             detail=str(e),
-        )
+        ) from e

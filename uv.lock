@@ -267,42 +267,42 @@ name = "football-manager"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "black" },
     { name = "fastapi" },
-    { name = "mypy" },
-    { name = "ruff" },
     { name = "uvicorn" },
 ]
 
 [package.dev-dependencies]
 dev = [
+    { name = "black" },
     { name = "coverage" },
     { name = "faker" },
     { name = "httpx" },
+    { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-cov" },
     { name = "pytest-mock" },
+    { name = "ruff" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "black", specifier = ">=26.5.1" },
     { name = "fastapi", specifier = ">=0.139.2" },
-    { name = "mypy", specifier = ">=2.3.0" },
-    { name = "ruff", specifier = ">=0.15.22" },
     { name = "uvicorn", specifier = ">=0.51.0" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "black", specifier = ">=26.5.1" },
     { name = "coverage", specifier = ">=7.15.2" },
     { name = "faker", specifier = ">=40.31.0" },
     { name = "httpx", specifier = ">=0.28.1" },
+    { name = "mypy", specifier = ">=2.3.0" },
     { name = "pytest", specifier = ">=9.1.1" },
     { name = "pytest-asyncio", specifier = ">=1.4.0" },
     { name = "pytest-cov", specifier = ">=7.1.0" },
     { name = "pytest-mock", specifier = ">=3.15.1" },
+    { name = "ruff", specifier = ">=0.15.22" },
 ]
 
 [[package]]

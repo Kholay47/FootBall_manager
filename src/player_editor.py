@@ -86,7 +86,6 @@ def normalize_ranks(players: list[Player]) -> None:
     """
 
     for tier in TIERS:
-
         tier_players = sorted(
             [p for p in players if p.tier == tier],
             key=lambda p: p.rank,
@@ -137,7 +136,6 @@ def insert_player_at_rank(
     )
 
     for existing in tier_players:
-
         if existing.rank >= rank:
             existing.rank += 1
 
@@ -376,7 +374,6 @@ def find_player(
     players = load_players()
 
     for player in players:
-
         if player.name.lower() == player_name.lower():
             return player
 
@@ -393,7 +390,6 @@ def update_player(
     current = None
 
     for player in players:
-
         if player.name.lower() == player_name.lower():
             current = player
             break
@@ -446,9 +442,7 @@ def update_availability(
     players = load_players()
 
     for player in players:
-
         if player.name.lower() == player_name.lower():
-
             player.available = available
 
             save_players(players)

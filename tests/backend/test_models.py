@@ -1,5 +1,3 @@
-import pytest
-
 from src.models import Player
 
 # ---------------------------------------------------
@@ -122,7 +120,7 @@ def test_repr_available():
         True,
     )
 
-    expected = "Messi | " "Tier: Elite | " "Rank: 1 | " "Available"
+    expected = "Messi | Tier: Elite | Rank: 1 | Available"
 
     assert repr(player) == expected
 
@@ -135,7 +133,7 @@ def test_repr_unavailable():
         False,
     )
 
-    expected = "Neymar | " "Tier: Good | " "Rank: 3 | " "Unavailable"
+    expected = "Neymar | Tier: Good | Rank: 3 | Unavailable"
 
     assert repr(player) == expected
 

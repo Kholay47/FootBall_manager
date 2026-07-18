@@ -4,8 +4,8 @@ from src.models import Player
 from src.player_manager import (
     load_players,
     save_players,
-    view_players,
     select_available_players,
+    view_players,
 )
 
 # ==========================================================

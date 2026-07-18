@@ -84,7 +84,6 @@ def random_split(players):
     team_b = []
 
     for i in range(0, len(ranked) - 1, 2):
-
         pair = [ranked[i], ranked[i + 1]]
         random.shuffle(pair)
 
@@ -93,7 +92,6 @@ def random_split(players):
 
     # Handle odd player count
     if len(ranked) % 2 == 1:
-
         last = ranked[-1]
 
         if len(team_a) < len(team_b):
@@ -122,7 +120,6 @@ def optimize_teams(players):
     seen = set()
 
     for _ in range(ITERATIONS):
-
         team_a, team_b = random_split(players)
 
         team_a, team_b = improve_teams(team_a, team_b)
@@ -179,14 +176,11 @@ def improve_teams(team_a, team_b):
     """
 
     while True:
-
         current = fitness(team_a, team_b)
         improved = False
 
         for i, player_a in enumerate(team_a):
-
             for j, player_b in enumerate(team_b):
-
                 # Try swap
                 team_a[i], team_b[j] = player_b, player_a
 
@@ -229,7 +223,6 @@ def print_teams(team_a, team_b):
     rows = max(len(team_a), len(team_b))
 
     for i in range(rows):
-
         left = ""
         right = ""
 
@@ -251,7 +244,7 @@ def print_teams(team_a, team_b):
 
     print("-" * 70)
 
-    print(f"Difference : {abs(score_a-score_b)}")
+    print(f"Difference : {abs(score_a - score_b)}")
 
     print("=" * 70)
 

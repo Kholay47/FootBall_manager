@@ -15,7 +15,7 @@ def load_players():
     if not JSON_FILE.exists():
         return []
 
-    with open(JSON_FILE, "r", encoding="utf-8") as file:
+    with open(JSON_FILE, encoding="utf-8") as file:
         data = json.load(file)
 
     return [Player.from_dict(player) for player in data]

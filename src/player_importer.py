@@ -15,7 +15,7 @@ def load_csv_players():
 
     players = []
 
-    with open(CSV_FILE, "r", newline="", encoding="utf-8") as file:
+    with open(CSV_FILE, newline="", encoding="utf-8") as file:
         reader = csv.DictReader(file)
 
         for row in reader:
@@ -162,7 +162,6 @@ def assign_tiers(new_players):
     players = []
 
     for index, name in enumerate(new_players, start=1):
-
         if index in elite:
             tier = "Elite"
             rank = elite_ranks[index]
