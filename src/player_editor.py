@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from src.models import Player
 from src.player_manager import load_players, save_players
 
@@ -13,6 +15,11 @@ TIER_PRIORITY = {
     "Average": 3,
 }
 
+TIERS = (
+    "Elite",
+    "Good",
+    "Average",
+)
 
 def manage_players():
     while True:
@@ -71,14 +78,23 @@ def display_players(players):
     print()
 
 
-def normalize_ranks(players):
-    for tier in ["Elite", "Good", "Average"]:
+def normalize_ranks(players: list[Player]) -> None:
+    """
+    Reassign ranks starting from 1
+    inside every tier.
+    """
+
+    for tier in TIERS:
+
         tier_players = sorted(
             [p for p in players if p.tier == tier],
             key=lambda p: p.rank,
         )
 
-        for rank, player in enumerate(tier_players, start=1):
+        for rank, player in enumerate(
+            tier_players,
+            start=1,
+        ):
             player.rank = rank
 
 
@@ -97,23 +113,43 @@ def choose_player(players):
         print("Invalid selection.")
 
 
-def insert_player_at_rank(players, player, tier, rank):
+def insert_player_at_rank(
+    players: list[Player],
+    player: Player,
+    tier: str,
+    rank: int,
+) -> None:
     """
-    Inserts a player into a tier at the desired rank.
-    Existing players are shifted down automatically.
+    Inserts a player into a tier.
+
+    Existing players at or below the rank
+    are shifted downward.
     """
 
-    tier_players = [p for p in players if p.tier == tier and p != player]
+    tier_players = [
+        p
+        for p in players
+        if p.tier == tier
+    ]
 
-    tier_players.sort(key=lambda p: p.rank)
+    max_rank = len(tier_players) + 1
 
-    rank = max(1, min(rank, len(tier_players) + 1))
+    rank = max(
+        1,
+        min(rank, max_rank),
+    )
 
-    tier_players.insert(rank - 1, player)
+    for existing in tier_players:
 
-    for index, p in enumerate(tier_players, start=1):
-        p.tier = tier
-        p.rank = index
+        if existing.rank >= rank:
+            existing.rank += 1
+
+    player.rank = rank
+    player.tier = tier
+
+    players.append(player)
+
+    normalize_ranks(players)
 
 
 def ask_rank(players, tier):
@@ -312,17 +348,23 @@ def add_player():
 # FastAPI CRUD Helpers
 # ==========================================================
 
-def get_all_players():
+def get_all_players() -> list[Player]:
     return load_players()
 
 
-def create_player(player: Player):
+def create_player(
+    player: Player,
+) -> Player:
+
     players = load_players()
 
-    if any(p.name.lower() == player.name.lower() for p in players):
-        raise ValueError("Player already exists.")
-
-    players.append(player)
+    if any(
+        p.name.lower() == player.name.lower()
+        for p in players
+    ):
+        raise ValueError(
+            f"Player '{player.name}' already exists."
+        )
 
     insert_player_at_rank(
         players,
@@ -336,71 +378,99 @@ def create_player(player: Player):
     return player
 
 
-def update_player(player_name: str, updated_player: Player):
+def find_player(
+    player_name: str,
+) -> Player | None:
+
     players = load_players()
 
-    target = None
+    for player in players:
+
+        if player.name.lower() == player_name.lower():
+            return player
+
+    return None
+
+def update_player(
+    player_name: str,
+    updated: Player,
+) -> Player:
+
+    players = load_players()
+
+    current = None
 
     for player in players:
+
         if player.name.lower() == player_name.lower():
-            target = player
+            current = player
             break
 
-    if target is None:
-        raise ValueError("Player not found.")
+    if current is None:
+        raise ValueError(
+            f"Player '{player_name}' not found."
+        )
 
-    players.remove(target)
+    players.remove(current)
 
     normalize_ranks(players)
-
-    new_player = Player(
-        name=updated_player.name,
-        tier=updated_player.tier,
-        rank=updated_player.rank,
-        available=updated_player.available,
-    )
-
-    players.append(new_player)
 
     insert_player_at_rank(
         players,
-        new_player,
-        new_player.tier,
-        new_player.rank,
+        updated,
+        updated.tier,
+        updated.rank,
     )
 
     save_players(players)
 
-    return new_player
+    return updated
 
 
-def remove_player(player_name: str):
+def remove_player(
+    player_name: str,
+) -> None:
+
     players = load_players()
 
-    target = None
+    player = next(
+        (
+            p
+            for p in players
+            if p.name.lower() == player_name.lower()
+        ),
+        None,
+    )
 
-    for player in players:
-        if player.name.lower() == player_name.lower():
-            target = player
-            break
+    if player is None:
+        raise ValueError(
+            f"Player '{player_name}' not found."
+        )
 
-    if target is None:
-        raise ValueError("Player not found.")
-
-    players.remove(target)
+    players.remove(player)
 
     normalize_ranks(players)
 
     save_players(players)
 
 
-def update_availability(player_name: str, available: bool):
+def update_availability(
+    player_name: str,
+    available: bool,
+) -> Player:
+
     players = load_players()
 
     for player in players:
-        if player.name == player_name:
+
+        if player.name.lower() == player_name.lower():
+
             player.available = available
+
             save_players(players)
+
             return player
 
-    raise ValueError(f"Player '{player_name}' not found.")
+    raise ValueError(
+        f"Player '{player_name}' not found."
+    )

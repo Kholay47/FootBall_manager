@@ -1,3 +1,5 @@
+import { useMemo, useState } from "react";
+
 import Navbar from "../components/layout/Navbar";
 import Container from "../components/layout/Container";
 import SectionTitle from "../components/layout/SectionTitle";
@@ -15,10 +17,15 @@ import useTeams from "../hooks/useTeams";
 import { getPlayerStats } from "../utils/playerStats";
 
 export default function Home() {
+
+    // =====================================
+    // Hooks
+    // =====================================
+
     const {
         players,
         loading,
-        error, 
+        error,
         create,
         edit,
         remove,
@@ -32,7 +39,88 @@ export default function Home() {
         generate,
     } = useTeams();
 
-    const stats = getPlayerStats(players);
+    // =====================================
+    // UI State
+    // =====================================
+
+    const [search, setSearch] = useState("");
+
+    // =====================================
+    // Dashboard Stats
+    // =====================================
+
+    const stats = useMemo(() => {
+
+        return getPlayerStats(players);
+
+    }, [players]);
+
+    // =====================================
+    // Filter Players
+    // =====================================
+
+    const filteredPlayers = useMemo(() => {
+
+        if (!search.trim()) {
+            return players;
+        }
+
+        return players.filter((player) =>
+            player.name
+                .toLowerCase()
+                .includes(search.toLowerCase())
+        );
+
+    }, [players, search]);
+
+    // =====================================
+    // Player Handlers
+    // =====================================
+
+    async function handleCreate(player) {
+        await create(player);
+    }
+
+    async function handleEdit(playerName, updatedPlayer) {
+        await edit(playerName, updatedPlayer);
+    }
+
+    async function handleDelete(playerName) {
+
+        const ok = window.confirm(
+            `Delete "${playerName}" ?`
+        );
+
+        if (!ok) return;
+
+        await remove(playerName);
+    }
+
+    async function handleToggle(player) {
+        await toggle(player);
+    }
+
+    // =====================================
+    // Team Generator
+    // =====================================
+
+    async function handleGenerate() {
+
+        try {
+
+            await generate();
+
+        } catch (err) {
+
+            console.error(err);
+
+        }
+
+    }
+
+    // =====================================
+    // Render
+    // =====================================
 
     return (
         <>
@@ -55,13 +143,19 @@ export default function Home() {
                 />
 
                 <PlayerManagement
-                    players={players}
+                    players={filteredPlayers}
                     loading={loading}
                     error={error}
-                    create={create}
-                    edit={edit}
-                    remove={remove}
-                    toggle={toggle}
+                
+                    search={search}
+                    setSearch={setSearch}
+                
+                    create={handleCreate}
+                    edit={handleEdit}
+                    remove={handleDelete}
+                    toggle={handleToggle}
+                
+                    totalPlayers={players.length}
                 />
 
                 <SectionTitle
@@ -71,7 +165,7 @@ export default function Home() {
 
                 <GenerateButton
                     loading={teamsLoading}
-                    onGenerate={generate}
+                    onGenerate={handleGenerate}
                 />
 
                 <TeamComparison
@@ -79,9 +173,9 @@ export default function Home() {
                 />
 
                 {teamsError && (
-                    <p className="mt-6 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-400">
+                    <div className="mt-6 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-400">
                         {teamsError}
-                    </p>
+                    </div>
                 )}
 
             </Container>

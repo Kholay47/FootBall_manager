@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import PlayerToolbar from "./PlayerToolbar";
 import PlayerTable from "./PlayerTable";
@@ -9,23 +9,18 @@ import DeletePlayerModal from "./DeletePlayerModal";
 
 export default function PlayerManagement({
 
-    players,
-
-    loading,
-
-    error,
-
-    create,
-
-    edit,
-
-    remove,
-
-    toggle,
+  players,
+  loading,
+  error,
+  search,
+  setSearch,
+  create,
+  edit,
+  remove,
+  toggle,
+  totalPlayers,
 
 }) {
-
-    const [search, setSearch] = useState("");
 
     const [addOpen, setAddOpen] = useState(false);
 
@@ -33,68 +28,117 @@ export default function PlayerManagement({
 
     const [deletePlayer, setDeletePlayer] = useState(null);
 
-    const filteredPlayers = useMemo(() => {
+    // ===========================================
+    // Handlers
+    // ===========================================
 
-        return players.filter((player) =>
-            player.name
-                .toLowerCase()
-                .includes(search.toLowerCase())
+    async function handleCreate(player) {
+
+        await create(player);
+
+        setAddOpen(false);
+
+    }
+
+    async function handleEdit(player) {
+
+        await edit(
+
+            editPlayer.name,
+
+            player,
+
         );
 
-    }, [players, search]);
+        setEditPlayer(null);
+
+    }
+
+    async function handleDelete() {
+
+        await remove(
+
+            deletePlayer.name,
+
+        );
+
+        setDeletePlayer(null);
+
+    }
+
+    async function handleToggle(player) {
+
+        await toggle(player);
+
+    }
+
+    // ===========================================
 
     return (
-        <section className="mt-10">
+
+        <section className="mt-10 space-y-6">
 
             <PlayerToolbar
-                search={search}
-                setSearch={setSearch}
-                onAdd={() => setAddOpen(true)}
+
+              search={search}
+              setSearch={setSearch}
+              totalPlayers={totalPlayers}
+              onAdd={() => setAddOpen(true)}
+
             />
 
             <PlayerTable
-                players={filteredPlayers}
+
+                players={players}
+
                 loading={loading}
+
                 error={error}
+
                 onEdit={setEditPlayer}
+
                 onDelete={setDeletePlayer}
-                onToggle={(player) =>
-                    toggle(
-                        player.name,
-                        player.available
-                    )
-                }
+
+                onToggle={handleToggle}
+
             />
 
             <AddPlayerModal
+
                 open={addOpen}
+
                 onClose={() => setAddOpen(false)}
-                onSubmit={async (player) => {
-                    await create(player);
-                    setAddOpen(false);
-                }}
+
+                onSubmit={handleCreate}
+
             />
 
             <EditPlayerModal
+
                 open={Boolean(editPlayer)}
+
                 player={editPlayer}
+
                 onClose={() => setEditPlayer(null)}
-                onSubmit={async (player) => {
-                    await edit(editPlayer.name, player);
-                    setEditPlayer(null);
-                }}
+
+                onSubmit={handleEdit}
+
             />
 
             <DeletePlayerModal
+
                 open={Boolean(deletePlayer)}
+
                 player={deletePlayer}
+
                 onClose={() => setDeletePlayer(null)}
-                onDelete={async (player) => {
-                    await remove(player.name);
-                    setDeletePlayer(null);
-                }}
+
+                onDelete={handleDelete}
+
             />
 
         </section>
+
     );
+
 }

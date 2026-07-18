@@ -1,15 +1,19 @@
 from fastapi import APIRouter, HTTPException
 
-from app.schemas import PlayerCreate, PlayerUpdate, AvailabilityUpdate
+from app.schemas import (
+    PlayerCreate,
+    PlayerUpdate,
+    AvailabilityUpdate,
+)
 
 from src.models import Player
 from src.player_editor import (
+    get_all_players,
     create_player,
     update_player,
     remove_player,
     update_availability,
 )
-from src.player_manager import load_players
 
 router = APIRouter(
     prefix="/players",
@@ -23,7 +27,11 @@ router = APIRouter(
 
 @router.get("")
 def get_players():
-    players = load_players()
+    """
+    Return every player.
+    """
+
+    players = get_all_players()
 
     return [
         player.to_dict()
@@ -32,24 +40,62 @@ def get_players():
 
 
 # =====================================================
+# GET SINGLE PLAYER
+# =====================================================
+
+@router.get("/{player_name}")
+def get_player(
+    player_name: str,
+):
+    """
+    Return a single player.
+    """
+
+    players = get_all_players()
+
+    for player in players:
+
+        if player.name.lower() == player_name.lower():
+            return player.to_dict()
+
+    raise HTTPException(
+        status_code=404,
+        detail=f"Player '{player_name}' not found.",
+    )
+
+
+# =====================================================
 # CREATE PLAYER
 # =====================================================
 
-@router.post("", status_code=201)
-def add_player(player: PlayerCreate):
+@router.post(
+    "",
+    status_code=201,
+)
+def add_player(
+    player: PlayerCreate,
+):
+    """
+    Create a new player.
+    """
+
     try:
+
         created = create_player(
+
             Player(
                 name=player.name,
                 tier=player.tier,
                 rank=player.rank,
                 available=player.available,
             )
+
         )
 
         return created.to_dict()
 
     except ValueError as e:
+
         raise HTTPException(
             status_code=400,
             detail=str(e),
@@ -65,20 +111,59 @@ def edit_player(
     player_name: str,
     player: PlayerUpdate,
 ):
+    """
+    Replace an existing player.
+    """
+
     try:
+
         updated = update_player(
+
             player_name,
+
             Player(
                 name=player.name,
                 tier=player.tier,
                 rank=player.rank,
                 available=player.available,
             ),
+
         )
 
         return updated.to_dict()
 
     except ValueError as e:
+
+        raise HTTPException(
+            status_code=404,
+            detail=str(e),
+        )
+
+
+# =====================================================
+# UPDATE AVAILABILITY
+# =====================================================
+
+@router.patch("/{player_name}/availability")
+def change_availability(
+    player_name: str,
+    payload: AvailabilityUpdate,
+):
+    """
+    Toggle player's availability.
+    """
+
+    try:
+
+        updated = update_availability(
+            player_name,
+            payload.available,
+        )
+
+        return updated.to_dict()
+
+    except ValueError as e:
+
         raise HTTPException(
             status_code=404,
             detail=str(e),
@@ -90,9 +175,18 @@ def edit_player(
 # =====================================================
 
 @router.delete("/{player_name}")
-def delete_player_route(player_name: str):
+def delete_player(
+    player_name: str,
+):
+    """
+    Delete a player.
+    """
+
     try:
-        remove_player(player_name)
+
+        remove_player(
+            player_name,
+        )
 
         return {
             "success": True,
@@ -100,32 +194,8 @@ def delete_player_route(player_name: str):
         }
 
     except ValueError as e:
+
         raise HTTPException(
             status_code=404,
             detail=str(e),
         )
-
-
-# =====================================================
-# TOGGLE AVAILABILITY
-# =====================================================
-
-@router.patch("/{player_name}/availability")
-def toggle_player_availability(
-    player_name: str,
-    payload: AvailabilityUpdate,
-):
-    try:
-        updated = update_availability(
-            player_name,
-            payload.available,
-        )
-
-        return updated.to_dict()
-
-    except ValueError as e:
-        raise HTTPException(
-            status_code=404,
-            detail=str(e),
-        )
-
