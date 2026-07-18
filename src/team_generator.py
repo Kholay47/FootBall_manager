@@ -21,6 +21,7 @@ RANK_DEDUCTION = 5
 # Player Score
 # -------------------------------
 
+
 def get_player_score(player):
     base = TIER_BASE_SCORE[player.tier]
 
@@ -34,6 +35,7 @@ def get_player_score(player):
 # Team Strength
 # -------------------------------
 
+
 def team_strength(team):
     return sum(get_player_score(p) for p in team)
 
@@ -41,6 +43,7 @@ def team_strength(team):
 # -------------------------------
 # Fitness Function
 # -------------------------------
+
 
 def fitness(team_a, team_b):
     """
@@ -55,16 +58,13 @@ def fitness(team_a, team_b):
         position balance
     """
 
-    return abs(
-        team_strength(team_a)
-        -
-        team_strength(team_b)
-    )
+    return abs(team_strength(team_a) - team_strength(team_b))
 
 
 # -------------------------------
 # Random Split
 # -------------------------------
+
 
 def random_split(players):
     """
@@ -168,8 +168,6 @@ def optimize_teams(players):
     return random.choice(best_candidates)
 
 
-
-
 def improve_teams(team_a, team_b):
     """
     Hill climbing optimization.
@@ -209,9 +207,11 @@ def improve_teams(team_a, team_b):
 
     return team_a, team_b
 
+
 # -------------------------------
 # Display
 # -------------------------------
+
 
 def print_teams(team_a, team_b):
 
@@ -262,20 +262,17 @@ def print_teams(team_a, team_b):
 # Main Generator
 # -------------------------------
 
+
 def generate_teams(return_json=False):
 
     players = load_players()
 
-    available = [
-        p
-        for p in players
-        if p.available
-    ]
+    available = [p for p in players if p.available]
 
     if len(available) < 2:
         return {
             "success": False,
-            "message": "At least two available players are required."
+            "message": "At least two available players are required.",
         }
 
     _, team_a, team_b = optimize_teams(available)

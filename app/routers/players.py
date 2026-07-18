@@ -25,6 +25,7 @@ router = APIRouter(
 # GET ALL PLAYERS
 # =====================================================
 
+
 @router.get("")
 def get_players():
     """
@@ -33,15 +34,13 @@ def get_players():
 
     players = get_all_players()
 
-    return [
-        player.to_dict()
-        for player in players
-    ]
+    return [player.to_dict() for player in players]
 
 
 # =====================================================
 # GET SINGLE PLAYER
 # =====================================================
+
 
 @router.get("/{player_name}")
 def get_player(
@@ -68,6 +67,7 @@ def get_player(
 # CREATE PLAYER
 # =====================================================
 
+
 @router.post(
     "",
     status_code=201,
@@ -82,14 +82,12 @@ def add_player(
     try:
 
         created = create_player(
-
             Player(
                 name=player.name,
                 tier=player.tier,
                 rank=player.rank,
                 available=player.available,
             )
-
         )
 
         return created.to_dict()
@@ -106,6 +104,7 @@ def add_player(
 # UPDATE PLAYER
 # =====================================================
 
+
 @router.put("/{player_name}")
 def edit_player(
     player_name: str,
@@ -118,16 +117,13 @@ def edit_player(
     try:
 
         updated = update_player(
-
             player_name,
-
             Player(
                 name=player.name,
                 tier=player.tier,
                 rank=player.rank,
                 available=player.available,
             ),
-
         )
 
         return updated.to_dict()
@@ -143,6 +139,7 @@ def edit_player(
 # =====================================================
 # UPDATE AVAILABILITY
 # =====================================================
+
 
 @router.patch("/{player_name}/availability")
 def change_availability(
@@ -173,6 +170,7 @@ def change_availability(
 # =====================================================
 # DELETE PLAYER
 # =====================================================
+
 
 @router.delete("/{player_name}")
 def delete_player(

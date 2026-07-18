@@ -21,6 +21,7 @@ TIERS = (
     "Average",
 )
 
+
 def manage_players():
     while True:
         print("\n========== MANAGE PLAYERS ==========\n")
@@ -126,11 +127,7 @@ def insert_player_at_rank(
     are shifted downward.
     """
 
-    tier_players = [
-        p
-        for p in players
-        if p.tier == tier
-    ]
+    tier_players = [p for p in players if p.tier == tier]
 
     max_rank = len(tier_players) + 1
 
@@ -342,11 +339,10 @@ def add_player():
     print("\nPlayer added successfully.\n")
 
 
-
-
 # ==========================================================
 # FastAPI CRUD Helpers
 # ==========================================================
+
 
 def get_all_players() -> list[Player]:
     return load_players()
@@ -358,13 +354,8 @@ def create_player(
 
     players = load_players()
 
-    if any(
-        p.name.lower() == player.name.lower()
-        for p in players
-    ):
-        raise ValueError(
-            f"Player '{player.name}' already exists."
-        )
+    if any(p.name.lower() == player.name.lower() for p in players):
+        raise ValueError(f"Player '{player.name}' already exists.")
 
     insert_player_at_rank(
         players,
@@ -391,6 +382,7 @@ def find_player(
 
     return None
 
+
 def update_player(
     player_name: str,
     updated: Player,
@@ -407,9 +399,7 @@ def update_player(
             break
 
     if current is None:
-        raise ValueError(
-            f"Player '{player_name}' not found."
-        )
+        raise ValueError(f"Player '{player_name}' not found.")
 
     players.remove(current)
 
@@ -434,18 +424,12 @@ def remove_player(
     players = load_players()
 
     player = next(
-        (
-            p
-            for p in players
-            if p.name.lower() == player_name.lower()
-        ),
+        (p for p in players if p.name.lower() == player_name.lower()),
         None,
     )
 
     if player is None:
-        raise ValueError(
-            f"Player '{player_name}' not found."
-        )
+        raise ValueError(f"Player '{player_name}' not found.")
 
     players.remove(player)
 
@@ -471,6 +455,4 @@ def update_availability(
 
             return player
 
-    raise ValueError(
-        f"Player '{player_name}' not found."
-    )
+    raise ValueError(f"Player '{player_name}' not found.")

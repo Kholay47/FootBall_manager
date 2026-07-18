@@ -11,6 +11,4 @@ router = APIRouter(
 @router.post("/generate")
 def generate():
 
-    return generate_teams(
-        return_json=True
-    )
+    return generate_teams(return_json=True)

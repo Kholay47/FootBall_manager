@@ -39,10 +39,7 @@ def sync_players():
     csv_players = load_csv_players()
     existing_players = load_players()
 
-    existing_names = {
-        player.name.lower()
-        for player in existing_players
-    }
+    existing_names = {player.name.lower() for player in existing_players}
 
     new_players = []
 
@@ -100,9 +97,7 @@ def _rank_players(indices, player_names, tier):
         )
 
         if set(ranking) != set(indices):
-            print(
-                "\nPlease enter exactly the player numbers shown above.\n"
-            )
+            print("\nPlease enter exactly the player numbers shown above.\n")
             continue
 
         ranks = {}
@@ -134,10 +129,7 @@ def assign_tiers(new_players):
         len(new_players),
     )
 
-    remaining = [
-        i for i in range(1, len(new_players) + 1)
-        if i not in elite
-    ]
+    remaining = [i for i in range(1, len(new_players) + 1) if i not in elite]
 
     if remaining:
         print("\nRemaining Players:\n")
@@ -160,9 +152,7 @@ def assign_tiers(new_players):
         break
 
     average = [
-        i
-        for i in range(1, len(new_players) + 1)
-        if i not in elite and i not in good
+        i for i in range(1, len(new_players) + 1) if i not in elite and i not in good
     ]
 
     elite_ranks = _rank_players(elite, new_players, "Elite")

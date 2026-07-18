@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 class PlayerCreate(BaseModel):
     name: str
     tier: str
@@ -13,6 +14,7 @@ class PlayerUpdate(BaseModel):
     tier: str
     rank: int
     available: bool
+
 
 class AvailabilityUpdate(BaseModel):
     available: bool
