@@ -1,7 +1,8 @@
 import random
 
-from src.player_manager import load_players
+from src.repositories.factory import get_repository
 
+repo = get_repository()
 # -------------------------------
 # Configuration
 # -------------------------------
@@ -258,7 +259,7 @@ def print_teams(team_a, team_b):
 
 def generate_teams(return_json=False):
 
-    players = load_players()
+    players = repo.load_players()
 
     available = [p for p in players if p.available]
 

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from src.models import Player
-from src.player_manager import load_players, save_players
 
+from src.repositories.factory import get_repository
+
+repo = get_repository()
 TIER_ORDER = {
     "1": "Elite",
     "2": "Good",
@@ -165,7 +167,7 @@ def ask_rank(players, tier):
 
 
 def change_player_tier():
-    players = load_players()
+    players = repo.load_players()
 
     if not players:
         return
@@ -206,13 +208,13 @@ def change_player_tier():
         desired_rank,
     )
 
-    save_players(players)
+    repo.save_players(players)
 
     print("\nPlayer tier updated successfully.\n")
 
 
 def change_player_rank():
-    players = load_players()
+    players = repo.load_players()
 
     if not players:
         return
@@ -241,13 +243,13 @@ def change_player_rank():
         rank,
     )
 
-    save_players(players)
+    repo.save_players(players)
 
     print("\nPlayer rank updated successfully.\n")
 
 
 def rename_player():
-    players = load_players()
+    players = repo.load_players()
 
     if not players:
         return
@@ -264,13 +266,13 @@ def rename_player():
 
     player.name = new_name
 
-    save_players(players)
+    repo.save_players(players)
 
     print("\nPlayer renamed successfully.\n")
 
 
 def delete_player():
-    players = load_players()
+    players = repo.load_players()
 
     if not players:
         return
@@ -287,13 +289,13 @@ def delete_player():
 
     normalize_ranks(players)
 
-    save_players(players)
+    repo.save_players(players)
 
     print("\nPlayer deleted successfully.\n")
 
 
 def add_player():
-    players = load_players()
+    players = repo.load_players()
 
     name = input("\nPlayer Name: ").strip()
 
@@ -332,7 +334,7 @@ def add_player():
         rank,
     )
 
-    save_players(players)
+    repo.save_players(players)
 
     print("\nPlayer added successfully.\n")
 
@@ -343,14 +345,14 @@ def add_player():
 
 
 def get_all_players() -> list[Player]:
-    return load_players()
+    return repo.load_players()
 
 
 def create_player(
     player: Player,
 ) -> Player:
 
-    players = load_players()
+    players = repo.load_players()
 
     if any(p.name.lower() == player.name.lower() for p in players):
         raise ValueError(f"Player '{player.name}' already exists.")
@@ -362,7 +364,7 @@ def create_player(
         player.rank,
     )
 
-    save_players(players)
+    repo.save_players(players)
 
     return player
 
@@ -371,7 +373,7 @@ def find_player(
     player_name: str,
 ) -> Player | None:
 
-    players = load_players()
+    players = repo.load_players()
 
     for player in players:
         if player.name.lower() == player_name.lower():
@@ -385,7 +387,7 @@ def update_player(
     updated: Player,
 ) -> Player:
 
-    players = load_players()
+    players = repo.load_players()
 
     current = None
 
@@ -408,7 +410,7 @@ def update_player(
         updated.rank,
     )
 
-    save_players(players)
+    repo.save_players(players)
 
     return updated
 
@@ -417,7 +419,7 @@ def remove_player(
     player_name: str,
 ) -> None:
 
-    players = load_players()
+    players = repo.load_players()
 
     player = next(
         (p for p in players if p.name.lower() == player_name.lower()),
@@ -431,7 +433,7 @@ def remove_player(
 
     normalize_ranks(players)
 
-    save_players(players)
+    repo.save_players(players)
 
 
 def update_availability(
@@ -439,13 +441,13 @@ def update_availability(
     available: bool,
 ) -> Player:
 
-    players = load_players()
+    players = repo.load_players()
 
     for player in players:
         if player.name.lower() == player_name.lower():
             player.available = available
 
-            save_players(players)
+            repo.save_players(players)
 
             return player
 

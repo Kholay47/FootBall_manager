@@ -1,9 +1,10 @@
 import csv
+
 from pathlib import Path
-
 from src.models import Player
-from src.player_manager import load_players
+from src.repositories.factory import get_repository
 
+repo = get_repository()
 CSV_FILE = Path("data/players.csv")
 
 
@@ -37,7 +38,7 @@ def sync_players():
     """
 
     csv_players = load_csv_players()
-    existing_players = load_players()
+    existing_players = repo.load_players()
 
     existing_names = {player.name.lower() for player in existing_players}
 
