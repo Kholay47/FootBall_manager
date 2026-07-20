@@ -4,7 +4,6 @@ from src.models import Player
 
 
 class PlayerRepository(ABC):
-
     @abstractmethod
     def load_players(self) -> list[Player]:
         """Return all players."""

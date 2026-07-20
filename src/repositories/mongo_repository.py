@@ -10,7 +10,6 @@ load_dotenv()
 
 
 class MongoRepository(PlayerRepository):
-
     def __init__(self):
         collection_name = getenv("COLLECTION_NAME", "players")
         self.collection = database[collection_name]
