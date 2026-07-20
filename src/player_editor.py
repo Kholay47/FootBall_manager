@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from src.models import Player
-
 from src.repositories.factory import get_repository
 
 repo = get_repository()
