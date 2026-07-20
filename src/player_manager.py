@@ -1,37 +1,9 @@
-import json
 from pathlib import Path
 
-from src.models import Player
+from src.repositories.factory import get_repository
 
+repo = get_repository()
 JSON_FILE = Path("data/players.json")
-
-
-def load_players():
-    """
-    Load all players from players.json.
-    Returns a list of Player objects.
-    """
-
-    if not JSON_FILE.exists():
-        return []
-
-    with open(JSON_FILE, "r", encoding="utf-8") as file:
-        data = json.load(file)
-
-    return [Player.from_dict(player) for player in data]
-
-
-def save_players(players):
-    """
-    Save all Player objects to players.json.
-    """
-
-    with open(JSON_FILE, "w", encoding="utf-8") as file:
-        json.dump(
-            [player.to_dict() for player in players],
-            file,
-            indent=4,
-        )
 
 
 def view_players():
@@ -39,7 +11,7 @@ def view_players():
     Display all players sorted by Tier and Rank.
     """
 
-    players = load_players()
+    players = repo.load_players()
 
     if not players:
         print("\nNo players found.\n")
@@ -78,7 +50,7 @@ def select_available_players():
     Allow the user to select today's available players.
     """
 
-    players = load_players()
+    players = repo.load_players()
 
     if not players:
         print("\nNo players found.\n")
@@ -127,7 +99,7 @@ def select_available_players():
     for number in valid_numbers:
         players[number - 1].available = True
 
-    save_players(players)
+    repo.save_players(players)
 
     print(
         f"\nToday's squad updated successfully! "

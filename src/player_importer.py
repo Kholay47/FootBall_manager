@@ -1,9 +1,10 @@
 import csv
+
 from pathlib import Path
-
 from src.models import Player
-from src.player_manager import load_players
+from src.repositories.factory import get_repository
 
+repo = get_repository()
 CSV_FILE = Path("data/players.csv")
 
 
@@ -15,7 +16,7 @@ def load_csv_players():
 
     players = []
 
-    with open(CSV_FILE, "r", newline="", encoding="utf-8") as file:
+    with open(CSV_FILE, newline="", encoding="utf-8") as file:
         reader = csv.DictReader(file)
 
         for row in reader:
@@ -37,12 +38,9 @@ def sync_players():
     """
 
     csv_players = load_csv_players()
-    existing_players = load_players()
+    existing_players = repo.load_players()
 
-    existing_names = {
-        player.name.lower()
-        for player in existing_players
-    }
+    existing_names = {player.name.lower() for player in existing_players}
 
     new_players = []
 
@@ -100,9 +98,7 @@ def _rank_players(indices, player_names, tier):
         )
 
         if set(ranking) != set(indices):
-            print(
-                "\nPlease enter exactly the player numbers shown above.\n"
-            )
+            print("\nPlease enter exactly the player numbers shown above.\n")
             continue
 
         ranks = {}
@@ -134,10 +130,7 @@ def assign_tiers(new_players):
         len(new_players),
     )
 
-    remaining = [
-        i for i in range(1, len(new_players) + 1)
-        if i not in elite
-    ]
+    remaining = [i for i in range(1, len(new_players) + 1) if i not in elite]
 
     if remaining:
         print("\nRemaining Players:\n")
@@ -160,9 +153,7 @@ def assign_tiers(new_players):
         break
 
     average = [
-        i
-        for i in range(1, len(new_players) + 1)
-        if i not in elite and i not in good
+        i for i in range(1, len(new_players) + 1) if i not in elite and i not in good
     ]
 
     elite_ranks = _rank_players(elite, new_players, "Elite")
@@ -172,7 +163,6 @@ def assign_tiers(new_players):
     players = []
 
     for index, name in enumerate(new_players, start=1):
-
         if index in elite:
             tier = "Elite"
             rank = elite_ranks[index]

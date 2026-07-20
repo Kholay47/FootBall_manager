@@ -1,6 +1,10 @@
-from src.models import Player
-from src.player_manager import load_players, save_players
+from __future__ import annotations
 
+from src.models import Player
+
+from src.repositories.factory import get_repository
+
+repo = get_repository()
 TIER_ORDER = {
     "1": "Elite",
     "2": "Good",
@@ -12,6 +16,12 @@ TIER_PRIORITY = {
     "Good": 2,
     "Average": 3,
 }
+
+TIERS = (
+    "Elite",
+    "Good",
+    "Average",
+)
 
 
 def manage_players():
@@ -71,14 +81,22 @@ def display_players(players):
     print()
 
 
-def normalize_ranks(players):
-    for tier in ["Elite", "Good", "Average"]:
+def normalize_ranks(players: list[Player]) -> None:
+    """
+    Reassign ranks starting from 1
+    inside every tier.
+    """
+
+    for tier in TIERS:
         tier_players = sorted(
             [p for p in players if p.tier == tier],
             key=lambda p: p.rank,
         )
 
-        for rank, player in enumerate(tier_players, start=1):
+        for rank, player in enumerate(
+            tier_players,
+            start=1,
+        ):
             player.rank = rank
 
 
@@ -97,23 +115,38 @@ def choose_player(players):
         print("Invalid selection.")
 
 
-def insert_player_at_rank(players, player, tier, rank):
+def insert_player_at_rank(
+    players: list[Player],
+    player: Player,
+    tier: str,
+    rank: int,
+) -> None:
     """
-    Inserts a player into a tier at the desired rank.
-    Existing players are shifted down automatically.
+    Inserts a player into a tier.
+
+    Existing players at or below the rank
+    are shifted downward.
     """
 
-    tier_players = [p for p in players if p.tier == tier and p != player]
+    tier_players = [p for p in players if p.tier == tier]
 
-    tier_players.sort(key=lambda p: p.rank)
+    max_rank = len(tier_players) + 1
 
-    rank = max(1, min(rank, len(tier_players) + 1))
+    rank = max(
+        1,
+        min(rank, max_rank),
+    )
 
-    tier_players.insert(rank - 1, player)
+    for existing in tier_players:
+        if existing.rank >= rank:
+            existing.rank += 1
 
-    for index, p in enumerate(tier_players, start=1):
-        p.tier = tier
-        p.rank = index
+    player.rank = rank
+    player.tier = tier
+
+    players.append(player)
+
+    normalize_ranks(players)
 
 
 def ask_rank(players, tier):
@@ -134,7 +167,7 @@ def ask_rank(players, tier):
 
 
 def change_player_tier():
-    players = load_players()
+    players = repo.load_players()
 
     if not players:
         return
@@ -175,13 +208,13 @@ def change_player_tier():
         desired_rank,
     )
 
-    save_players(players)
+    repo.save_players(players)
 
     print("\nPlayer tier updated successfully.\n")
 
 
 def change_player_rank():
-    players = load_players()
+    players = repo.load_players()
 
     if not players:
         return
@@ -210,13 +243,13 @@ def change_player_rank():
         rank,
     )
 
-    save_players(players)
+    repo.save_players(players)
 
     print("\nPlayer rank updated successfully.\n")
 
 
 def rename_player():
-    players = load_players()
+    players = repo.load_players()
 
     if not players:
         return
@@ -233,13 +266,13 @@ def rename_player():
 
     player.name = new_name
 
-    save_players(players)
+    repo.save_players(players)
 
     print("\nPlayer renamed successfully.\n")
 
 
 def delete_player():
-    players = load_players()
+    players = repo.load_players()
 
     if not players:
         return
@@ -256,13 +289,13 @@ def delete_player():
 
     normalize_ranks(players)
 
-    save_players(players)
+    repo.save_players(players)
 
     print("\nPlayer deleted successfully.\n")
 
 
 def add_player():
-    players = load_players()
+    players = repo.load_players()
 
     name = input("\nPlayer Name: ").strip()
 
@@ -301,6 +334,121 @@ def add_player():
         rank,
     )
 
-    save_players(players)
+    repo.save_players(players)
 
     print("\nPlayer added successfully.\n")
+
+
+# ==========================================================
+# FastAPI CRUD Helpers
+# ==========================================================
+
+
+def get_all_players() -> list[Player]:
+    return repo.load_players()
+
+
+def create_player(
+    player: Player,
+) -> Player:
+
+    players = repo.load_players()
+
+    if any(p.name.lower() == player.name.lower() for p in players):
+        raise ValueError(f"Player '{player.name}' already exists.")
+
+    insert_player_at_rank(
+        players,
+        player,
+        player.tier,
+        player.rank,
+    )
+
+    repo.save_players(players)
+
+    return player
+
+
+def find_player(
+    player_name: str,
+) -> Player | None:
+
+    players = repo.load_players()
+
+    for player in players:
+        if player.name.lower() == player_name.lower():
+            return player
+
+    return None
+
+
+def update_player(
+    player_name: str,
+    updated: Player,
+) -> Player:
+
+    players = repo.load_players()
+
+    current = None
+
+    for player in players:
+        if player.name.lower() == player_name.lower():
+            current = player
+            break
+
+    if current is None:
+        raise ValueError(f"Player '{player_name}' not found.")
+
+    players.remove(current)
+
+    normalize_ranks(players)
+
+    insert_player_at_rank(
+        players,
+        updated,
+        updated.tier,
+        updated.rank,
+    )
+
+    repo.save_players(players)
+
+    return updated
+
+
+def remove_player(
+    player_name: str,
+) -> None:
+
+    players = repo.load_players()
+
+    player = next(
+        (p for p in players if p.name.lower() == player_name.lower()),
+        None,
+    )
+
+    if player is None:
+        raise ValueError(f"Player '{player_name}' not found.")
+
+    players.remove(player)
+
+    normalize_ranks(players)
+
+    repo.save_players(players)
+
+
+def update_availability(
+    player_name: str,
+    available: bool,
+) -> Player:
+
+    players = repo.load_players()
+
+    for player in players:
+        if player.name.lower() == player_name.lower():
+            player.available = available
+
+            repo.save_players(players)
+
+            return player
+
+    raise ValueError(f"Player '{player_name}' not found.")

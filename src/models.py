@@ -31,9 +31,4 @@ class Player:
     def __repr__(self):
         status = "Available" if self.available else "Unavailable"
 
-        return (
-            f"{self.name} | "
-            f"Tier: {self.tier} | "
-            f"Rank: {self.rank} | "
-            f"{status}"
-        )
+        return f"{self.name} | Tier: {self.tier} | Rank: {self.rank} | {status}"

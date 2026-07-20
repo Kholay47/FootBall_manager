@@ -1,11 +1,11 @@
-from src.player_importer import sync_players, assign_tiers
-from src.team_generator import generate_teams
+from src.player_editor import manage_players
+from src.player_importer import assign_tiers, sync_players
 from src.player_manager import (
     save_players,
-    view_players,
     select_available_players,
+    view_players,
 )
-from src.player_editor import manage_players
+from src.team_generator import generate_teams
 
 
 def import_new_players():

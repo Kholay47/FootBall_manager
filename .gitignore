@@ -8,3 +8,11 @@ wheels/
 
 # Virtual environments
 .venv
+data/players.json
+data/players.csv
+.env
+htmlcov
+.coverage
+.pytest_cache
+.ruff_cache
+.mypy_cache

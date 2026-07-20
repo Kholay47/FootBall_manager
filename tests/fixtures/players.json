@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Messi",
+        "tier": "Elite",
+        "rank": 1,
+        "available": true
+    },
+    {
+        "name": "Ronaldo",
+        "tier": "Elite",
+        "rank": 2,
+        "available": true
+    },
+    {
+        "name": "Neymar",
+        "tier": "Good",
+        "rank": 3,
+        "available": false
+    }
+]
