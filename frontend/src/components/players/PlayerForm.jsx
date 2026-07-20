@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Button from "../common/Button";
 
@@ -15,25 +15,17 @@ export default function PlayerForm({
     loading = false,
     submitLabel = "Save Player",
 }) {
-
-    const [formData, setFormData] = useState(DEFAULT_PLAYER);
+    const [formData, setFormData] = useState(
+        () => initialValues || DEFAULT_PLAYER
+    );
 
     const [errors, setErrors] = useState({});
-
-    useEffect(() => {
-
-        setFormData(initialValues || DEFAULT_PLAYER);
-
-        setErrors({});
-
-    }, [initialValues]);
 
     // ==========================================
     // Input Change
     // ==========================================
 
     function handleChange(e) {
-
         const { name, value, checked, type } = e.target;
 
         setFormData((prev) => ({
@@ -42,15 +34,14 @@ export default function PlayerForm({
                 type === "checkbox"
                     ? checked
                     : name === "rank"
-                    ? Number(value)
-                    : value,
+                      ? Number(value)
+                      : value,
         }));
 
         setErrors((prev) => ({
             ...prev,
             [name]: "",
         }));
-
     }
 
     // ==========================================
@@ -58,45 +49,33 @@ export default function PlayerForm({
     // ==========================================
 
     function validate() {
-
         const validationErrors = {};
 
         const trimmedName = formData.name.trim();
 
         if (!trimmedName) {
-
             validationErrors.name = "Player name is required.";
-
         } else if (trimmedName.length < 2) {
-
             validationErrors.name =
                 "Player name must contain at least 2 characters.";
-
         }
 
         if (!["Elite", "Good", "Average"].includes(formData.tier)) {
-
             validationErrors.tier =
                 "Please select a valid tier.";
-
         }
 
         if (!Number.isInteger(formData.rank)) {
-
             validationErrors.rank =
                 "Rank must be a whole number.";
-
         } else if (formData.rank < 1) {
-
             validationErrors.rank =
                 "Rank must be greater than zero.";
-
         }
 
         setErrors(validationErrors);
 
         return Object.keys(validationErrors).length === 0;
-
     }
 
     // ==========================================
@@ -104,38 +83,28 @@ export default function PlayerForm({
     // ==========================================
 
     async function handleSubmit(e) {
-
         e.preventDefault();
 
         if (!validate()) {
-
             return;
-
         }
 
         await onSubmit({
-
             ...formData,
-
             name: formData.name.trim(),
-
         });
-
     }
 
     // ==========================================
 
     return (
-
         <form
             onSubmit={handleSubmit}
             className="space-y-5"
         >
-
             {/* Name */}
 
             <div>
-
                 <label
                     htmlFor="player-name"
                     className="mb-2 block text-sm font-medium text-slate-300"
@@ -154,21 +123,15 @@ export default function PlayerForm({
                 />
 
                 {errors.name && (
-
                     <p className="mt-1 text-sm text-red-400">
-
                         {errors.name}
-
                     </p>
-
                 )}
-
             </div>
 
             {/* Tier */}
 
             <div>
-
                 <label
                     htmlFor="player-tier"
                     className="mb-2 block text-sm font-medium text-slate-300"
@@ -195,25 +158,18 @@ export default function PlayerForm({
                     <option value="Average">
                         Average
                     </option>
-
                 </select>
 
                 {errors.tier && (
-
                     <p className="mt-1 text-sm text-red-400">
-
                         {errors.tier}
-
                     </p>
-
                 )}
-
             </div>
 
             {/* Rank */}
 
             <div>
-
                 <label
                     htmlFor="player-rank"
                     className="mb-2 block text-sm font-medium text-slate-300"
@@ -234,21 +190,15 @@ export default function PlayerForm({
                 />
 
                 {errors.rank && (
-
                     <p className="mt-1 text-sm text-red-400">
-
                         {errors.rank}
-
                     </p>
-
                 )}
-
             </div>
 
             {/* Availability */}
 
             <label className="flex items-center gap-3">
-
                 <input
                     type="checkbox"
                     name="available"
@@ -258,11 +208,8 @@ export default function PlayerForm({
                 />
 
                 <span className="text-white">
-
                     Available
-
                 </span>
-
             </label>
 
             {/* Submit */}
@@ -272,15 +219,10 @@ export default function PlayerForm({
                 className="w-full"
                 disabled={loading}
             >
-
                 {loading
                     ? "Saving..."
                     : submitLabel}
-
             </Button>
-
         </form>
-
     );
-
 }

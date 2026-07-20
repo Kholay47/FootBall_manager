@@ -1,10 +1,8 @@
-from src.repositories.repository import PlayerRepository
-
+import json
 from pathlib import Path
 
 from src.models import Player
-
-import json
+from src.repositories.repository import PlayerRepository
 
 JSON_FILE = Path("data/players.json")
 

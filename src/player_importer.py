@@ -1,6 +1,6 @@
 import csv
-
 from pathlib import Path
+
 from src.models import Player
 from src.repositories.factory import get_repository
 

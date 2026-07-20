@@ -30,7 +30,7 @@ export async function api(
         config
     );
 
-    let data = null;
+    let data;
 
     try {
         data = await response.json();
