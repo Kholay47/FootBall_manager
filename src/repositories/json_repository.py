@@ -8,7 +8,6 @@ JSON_FILE = Path("data/players.json")
 
 
 class JSONRepository(PlayerRepository):
-
     def load_players(self) -> list[Player]:
         if not JSON_FILE.exists():
             return []
